@@ -7,10 +7,10 @@ terraform {
   }
 }
 
-provider "azurerm" {
+/* provider "azurerm" {
   features {}
 }
-
+ */
 provider "azurerm" {
   features {
     key_vault {

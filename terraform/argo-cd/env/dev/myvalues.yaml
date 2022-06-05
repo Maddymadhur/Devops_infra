@@ -1,0 +1,54 @@
+server:  
+  
+  additionalProjects: 
+  - name: testproject 
+    namespace: argocd
+    additionalLabels: {}
+    additionalAnnotations: {}
+    additionalAnnotations: {}
+    finalizers:
+    - resources-finalizer.argocd.argoproj.io
+    description: This is Demo DMP project
+    sourceRepos:
+    - git@github.com:Maddymadhur/testrepo.git
+    destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+    namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+    - group: '*'
+      kind: '*'
+
+
+  additionalApplications: 
+  - name: argocd-demo
+    namespace: argocd
+    additionalLabels: {}
+    additionalAnnotations: {}
+    finalizers:
+    - resources-finalizer.argocd.argoproj.io
+    project: testproject
+    source:
+      repoURL:  git@github.com:Maddymadhur/testrepo.git
+      targetRevision: HEAD
+      path: 
+      directory:
+        recurse: true
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: argocd
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
+
+
+  config:
+    #DEPRECATED: Please instead use configs.credentialTemplates and configs.repositories
+    repositories: |
+      - url: git@github.com:Maddymadhur/testrepo.git
+        sshPrivateKeySecret:
+          name: my-secret-from-akv
+          key: secret-value
+          

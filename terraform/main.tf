@@ -1,10 +1,9 @@
+//----------------------------------Resource Group------------------------------------------------------------------
 resource "azurerm_resource_group" "infrastructure" {
   name     = "infrastructure"
   location = "westeurope"
 }
-
-//--------------------------Container Registry----------------
-
+//---------------------------------Container Registry---------------------------------------------------------------
 resource "azurerm_container_registry" "ContainerregistryInfra" {
   name                = "ContainerregistryInfra"
   resource_group_name = azurerm_resource_group.infrastructure.name
@@ -12,7 +11,7 @@ resource "azurerm_container_registry" "ContainerregistryInfra" {
   sku                 = "Standard"
 }
 
-//----------Kubernetes Cluster --------------------------------
+//---------------------------------Kubernetes Cluster----------------------------------------------------------------
 resource "azurerm_kubernetes_cluster" "infrastructure" {
   name                = "infrastructure-aks1"
   location            = azurerm_resource_group.infrastructure.location
@@ -33,7 +32,7 @@ resource "azurerm_kubernetes_cluster" "infrastructure" {
     Environment = "Production"
   }
 }  
-//-----------------Key Vault------------------------------------
+//-----------------------------------------------Key Vault------------------------------------------------------------
 
 data "azurerm_client_config" "current" {
 }
@@ -49,4 +48,4 @@ data "azurerm_client_config" "current" {
   sku_name = "standard"
 }   
 
-
+//------------------------------------------------------------------------------------------------------------------------

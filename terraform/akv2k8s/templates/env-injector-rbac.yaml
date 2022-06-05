@@ -1,0 +1,92 @@
+{{- $roleType := "ClusterRole" -}}
+{{- $roleBindingType := "ClusterRoleBinding" -}}
+{{- if not .Values.watchAllNamespaces }}
+{{- $roleType = "Role" -}}
+{{- $roleBindingType = "RoleBinding" -}}
+{{- end -}}
+{{- if and .Values.env_injector.enabled .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleType }}
+metadata:
+  name: {{ template "akv2k8s.envinjector.fullname" . }}
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets # in order to create secret for client cert
+  verbs:
+  - create
+  - update
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - namespaces # in order to authorize incoming auth requests
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts # in order to read
+  verbs:
+  - get
+---
+# Create a akv2k8s reader cluster role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleType }}
+metadata:
+  name: {{ template "akv2k8s.envinjector.fullname" . }}-reader
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - spv.no
+  resources:
+  - azurekeyvaultsecrets
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleBindingType }}
+metadata:
+  name: {{ template "akv2k8s.envinjector.fullname" . }}-sa
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  namespace: {{ .Release.Namespace }}
+  name: {{ template "envinjector.serviceAccountName" . }}
+roleRef:
+  kind: {{ $roleType }}
+  apiGroup: rbac.authorization.k8s.io
+  name: {{ template "akv2k8s.envinjector.fullname" . }}
+---
+# Give all service accounts read access to akvs
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleBindingType }}
+metadata:
+  name: {{ template "akv2k8s.envinjector.fullname" . }}-reader
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+subjects:
+- kind: Group
+  name: system:serviceaccounts
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: {{ $roleType }}
+  name: {{ template "akv2k8s.envinjector.fullname" . }}-reader
+  apiGroup: rbac.authorization.k8s.io
+{{- end}}

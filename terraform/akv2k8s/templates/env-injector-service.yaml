@@ -1,0 +1,27 @@
+{{- if .Values.env_injector.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "akv2k8s.envinjector.fullname" . }}
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+    {{- include "akv2k8s.components.webhook" . | nindent 4 }}
+spec:
+  type: {{ .Values.env_injector.service.type }}
+  ports:
+    - name: webhook-tls
+      port: {{ .Values.env_injector.service.externalTlsPort }}
+      targetPort: {{ .Values.env_injector.service.internalTlsPort }}
+      protocol: TCP
+    - name: http
+      port: {{ .Values.env_injector.service.externalHttpPort }}
+      targetPort: {{ .Values.env_injector.service.internalHttpPort }}
+      protocol: TCP
+    - name: auth-tls
+      port: {{ .Values.env_injector.service.internalMtlsPort }}
+      targetPort: {{ .Values.env_injector.service.externalMtlsPort }}
+      protocol: TCP
+  selector:
+    {{- include "akv2k8s.selectors" . | nindent 4 }}
+    {{- include "akv2k8s.components.webhook" . | nindent 4 }}
+{{- end }}
