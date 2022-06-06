@@ -32,7 +32,7 @@ server:
     source:
       repoURL:  git@github.com:Maddymadhur/testrepo.git
       targetRevision: HEAD
-      path: 
+      path: apps
       directory:
         recurse: true
     destination:
