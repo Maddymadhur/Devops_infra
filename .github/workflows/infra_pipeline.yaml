@@ -1,0 +1,29 @@
+name: AKS 
+
+on:
+  workflow_dispatch
+    inputs:
+      run_terraform:
+        description: "Type \ "DEPLOY TERRAFORM\" to deploy terrafrom"
+        default: null
+        required: false
+
+  push:
+    path:
+      - terraform/*.tf
+    branches:
+      - master  
+
+jobs:
+  terraform: 
+    runs-on: ubuntu-latest
+
+    env:
+      
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Terraform
+        uses: 
+
+      -  
