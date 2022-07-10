@@ -1,29 +1,47 @@
-name: AKS 
+name: AKS
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
     inputs:
       run_terraform:
-        description: "Type \ "DEPLOY TERRAFORM\" to deploy terrafrom"
+        description: "Type \"DEPLOY TERRAFORM\" to deploy Terraform"
         default: null
         required: false
 
   push:
-    path:
+    paths:
       - terraform/*.tf
     branches:
-      - master  
+      - master 
 
 jobs:
-  terraform: 
+  terraform:
     runs-on: ubuntu-latest
 
     env:
-      
+      ARM_CLIENT_ID: bd248a56-3460-4856-9b21-9a5ccfdb6d85
+      ARM_CLIENT_SECRET: zW~8Q~u.jC6lPkh4e-rrLiefLIWW49KfWaIqvaJd
+      ARM_SUBSCRIPTION_ID: 58299428-b94d-4171-8ae1-1aa5bccb1765
+      ARM_TENANT_ID: 7d2c1f1a-ef24-4fed-84fe-2d915cb96792
+    
+
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Setup Terraform
-        uses: 
 
-      -  
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: "terraform/"
+        
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: "terraform/"
+      
+      - name: terraform apply 
+        run: terraform apply -auto-approve
+        working-directory: "terraform/"
