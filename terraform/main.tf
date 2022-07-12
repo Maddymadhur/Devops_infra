@@ -1,13 +1,13 @@
 //----------------------------------Resource Group------------------------------------------------------------------
 resource "azurerm_resource_group" "infrastructureaks" {
-  name     = "infrastructure"
+  name     = "infrastructureaks"
   location = "westeurope"
 }
 //---------------------------------Container Registry---------------------------------------------------------------
 resource "azurerm_container_registry" "ContainerregistryInfra" {
   name                = "ContainerregistryInfra"
-  resource_group_name = azurerm_resource_group.infrastructure.name
-  location            = azurerm_resource_group.infrastructure.location
+  resource_group_name = azurerm_resource_group.infrastructureaks.name
+  location            = azurerm_resource_group.infrastructureaks.location
   sku                 = "Standard"
 }
 
@@ -16,8 +16,8 @@ resource "azurerm_container_registry" "ContainerregistryInfra" {
 //---------------------------------Kubernetes Cluster----------------------------------------------------------------
 resource "azurerm_kubernetes_cluster" "infrastructure" {
   name                = "infrastructure-aks1"
-  location            = azurerm_resource_group.infrastructure.location
-  resource_group_name = azurerm_resource_group.infrastructure.name
+  location            = azurerm_resource_group.infrastructureaks.location
+  resource_group_name = azurerm_resource_group.infrastructureaks.name
   dns_prefix          = "infrastructureaks1"
 
   default_node_pool {
@@ -49,8 +49,8 @@ data "azurerm_client_config" "current" {
 
  resource "azurerm_key_vault" "infrakeyvault123" {
   name                        = "infrakeyvault123"
-  location                    = azurerm_resource_group.infrastructure.location
-  resource_group_name         = azurerm_resource_group.infrastructure.name
+  location                    = azurerm_resource_group.infrastructureaks.location
+  resource_group_name         = azurerm_resource_group.infrastructureaks.name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7
