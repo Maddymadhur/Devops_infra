@@ -33,7 +33,15 @@ resource "azurerm_kubernetes_cluster" "infrastructure" {
   tags = {
     Environment = "Dev"
   }
-}  
+} 
+//---------------------------------------------Role assignment for container registry------------------------------------------------------------
+
+resource "azurerm_role_assignment" "example" {
+  principal_id                     = azurerm_kubernetes_cluster.infrastructure.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.ContainerregistryInfra.id
+  skip_service_principal_aad_check = true
+}
 //-----------------------------------------------Key Vault------------------------------------------------------------
 
 data "azurerm_client_config" "current" {
@@ -58,14 +66,14 @@ data "azurerm_client_config" "current" {
   }
 } */
 
-//--------------------------------------------------prometheus-----------------------------------------------------------------resource "helm_release" "prometheus" {
- resource "helm_release" "argo-cd" {
+//--------------------------------------------------prometheus-----------------------------------------------------------------resource "helm_release" "prometheus" {/* 
+ /* resource "helm_release" "argo-cd" {
   chart      = "argo-cd"
   name       = "argo-cd"
   namespace  = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   verify = false
- }
+ } */ 
 //----------------------------------------------------grafana--------------------------------------------------------------
 
 /* resource "kubernetes_secret" "grafana" {
