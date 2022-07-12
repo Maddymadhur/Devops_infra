@@ -12,7 +12,7 @@ on:
     paths:
       - terraform/*.tf
     branches:
-      - master 
+      - main
 
 jobs:
   terraform:
