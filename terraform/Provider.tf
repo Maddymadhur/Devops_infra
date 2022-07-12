@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.8.0"
     }
+    azuread = {
+      source = "hashicorp/azuread"
+      version = "2.26.1"
+    }
   }
 }
 
@@ -19,6 +23,9 @@ provider "azurerm" {
   }
 }
 
+provider "azuread" {
+  # Configuration options
+}
 provider "helm" {
   kubernetes {
     config_path = pathexpand(var.kube_config)

@@ -4,6 +4,9 @@ resource "azurerm_resource_group" "infrastructureaks" {
   location = "westeurope"
 }
 //---------------------------------Container Registry---------------------------------------------------------------
+data "azurerm_client_config" "current" {
+
+}
 resource "azurerm_container_registry" "ContainerregistryInfra" {
   name                = "ContainerregistryInfra"
   resource_group_name = azurerm_resource_group.infrastructureaks.name
@@ -11,10 +14,8 @@ resource "azurerm_container_registry" "ContainerregistryInfra" {
   sku                 = "Standard"
 }
 
-
-
 //---------------------------------Kubernetes Cluster----------------------------------------------------------------
-resource "azurerm_kubernetes_cluster" "infrastructure" {
+resource "azurerm_kubernetes_cluster" "infrastructure-aks1" {
   name                = "infrastructure-aks1"
   location            = azurerm_resource_group.infrastructureaks.location
   resource_group_name = azurerm_resource_group.infrastructureaks.name
@@ -33,30 +34,44 @@ resource "azurerm_kubernetes_cluster" "infrastructure" {
   tags = {
     Environment = "Dev"
   }
-} 
+}
 //---------------------------------------------Role assignment for container registry------------------------------------------------------------
-
 resource "azurerm_role_assignment" "example" {
-  principal_id                     = azurerm_kubernetes_cluster.infrastructure.kubelet_identity[0].object_id
+  principal_id                     =  data.azurerm_client_config.current.client_id
   role_definition_name             = "AcrPull"
   scope                            = azurerm_container_registry.ContainerregistryInfra.id
   skip_service_principal_aad_check = true
 }
 //-----------------------------------------------Key Vault------------------------------------------------------------
 
-data "azurerm_client_config" "current" {
-}
-
- resource "azurerm_key_vault" "infrakeyvault123" {
-  name                        = "infrakeyvault123"
+resource "azurerm_key_vault" "keyvaultinfra12345" {
+  name                        = "keyvaultinfra12345"
   location                    = azurerm_resource_group.infrastructureaks.location
   resource_group_name         = azurerm_resource_group.infrastructureaks.name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days  = 7
   purge_protection_enabled    = false
+
   sku_name = "standard"
-}   
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = "00ef2014-e390-44a8-a9c9-d6294d9bc48b"
+
+    key_permissions = [
+      "Get",
+    ]
+
+    secret_permissions = [
+      "Get",
+    ]
+
+    storage_permissions = [
+      "Get",
+    ]
+  }
+}
 
 //----------------------------------------------namespaces--------------------------------------------------------------------------
 
@@ -67,16 +82,16 @@ data "azurerm_client_config" "current" {
 } */
 
 //--------------------------------------------------prometheus-----------------------------------------------------------------resource "helm_release" "prometheus" {/* 
- /* resource "helm_release" "argo-cd" {
-  chart      = "argo-cd"
-  name       = "argo-cd"
+ /* resource "helm_release" "argocd" {
+  chart      = "../argo-cd"
+  name       = "argocd"
   namespace  = "argocd"
-  repository = "https://argoproj.github.io/argo-helm"
   verify = false
- } */ 
+ }  */
 //----------------------------------------------------grafana--------------------------------------------------------------
 
-/* resource "kubernetes_secret" "grafana" {
+/* resource "kubernetes_secret" "grafana" {yes
+
   metadata {
     name      = "grafana"
     namespace = var.namespace
