@@ -23,7 +23,7 @@ jobs:
       ARM_CLIENT_SECRET: zW~8Q~u.jC6lPkh4e-rrLiefLIWW49KfWaIqvaJd
       ARM_SUBSCRIPTION_ID: 58299428-b94d-4171-8ae1-1aa5bccb1765
       ARM_TENANT_ID: 7d2c1f1a-ef24-4fed-84fe-2d915cb96792
-    
+      ARM_ACCESS_KEY: uDkqeDe1vo2KYudWS6n0997x2NCouC90ZWSnnu7rcuTIUICjNE5p3mhjConLOvIah27yhXFcicR3+AStpANDKg==
 
     steps:
       - uses: actions/checkout@v2
