@@ -1,5 +1,5 @@
 //----------------------------------Resource Group------------------------------------------------------------------
-resource "azurerm_resource_group" "infrastructure" {
+resource "azurerm_resource_group" "infrastructureaks" {
   name     = "infrastructure"
   location = "westeurope"
 }
