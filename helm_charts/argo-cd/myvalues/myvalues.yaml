@@ -32,7 +32,7 @@ server:
     source:
       repoURL: git@github.com:Maddymadhur/Devops_infra.git
       targetRevision: main
-      path: Apps
+      path: apps
       directory:
         recurse: true
     destination:
