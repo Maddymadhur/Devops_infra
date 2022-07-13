@@ -31,15 +31,15 @@ server:
     project: devops
     source:
       repoURL: git@github.com:Maddymadhur/Devops_infra.git
-      targetRevision: HEAD
+      targetRevision: main
       path: Apps
       directory:
         recurse: true
     destination:
       server: https://kubernetes.default.svc
-      namespace: argocd
+      namespace: nginx
     syncPolicy:
-      automated:helm repo add spv-charts https://charts.spvapi.no
+      automated: 
         prune: true
         selfHeal: true
 
