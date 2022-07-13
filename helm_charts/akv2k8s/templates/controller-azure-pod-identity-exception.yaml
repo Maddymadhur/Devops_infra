@@ -1,0 +1,11 @@
+{{- if and .Values.controller.enabled .Values.addAzurePodIdentityException }}
+apiVersion: "aadpodidentity.k8s.io/v1"
+kind: AzurePodIdentityException
+metadata:
+  name: akv2k8s-controller-exception
+  namespace: {{ .Release.Namespace }}
+spec:
+  podLabels:
+    {{- include "akv2k8s.selectors" . | nindent 4 }}
+    {{- include "akv2k8s.components.controller" . | nindent 4 }}
+{{- end }}

@@ -1,0 +1,52 @@
+server:  
+  
+  additionalProjects: 
+  - name: devops
+    namespace: argo-cd
+    additionalLabels: {}
+    additionalAnnotations: {}
+    additionalAnnotations: {}
+    finalizers:
+    - resources-finalizer.argocd.argoproj.io
+    description: This is Demo DMP project
+    sourceRepos:
+    - git@github.com:Maddymadhur/Devops_infra.git
+    destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+    namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+    - group: '*'
+      kind: '*'
+
+
+  additionalApplications: 
+  - name: argocd-demo
+    namespace: argo-cd
+    additionalLabels: {}
+    additionalAnnotations: {}
+    finalizers:
+    - resources-finalizer.argocd.argoproj.io
+    project: devops
+    source:
+      repoURL: git@github.com:Maddymadhur/Devops_infra.git
+      targetRevision: HEAD
+      path: Apps
+      directory:
+        recurse: true
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: argocd
+    syncPolicy:
+      automated:helm repo add spv-charts https://charts.spvapi.no
+        prune: true
+        selfHeal: true
+
+  config:
+    #DEPRECATED: Please instead use configs.credentialTemplates and configs.repositories
+    repositories: |
+      - url: git@github.com:Maddymadhur/Devops_infra.git
+        sshPrivateKeySecret:
+          name: my-secret-from-akv
+          key: secret-value

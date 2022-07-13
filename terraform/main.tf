@@ -72,7 +72,7 @@ resource "azurerm_key_vault" "keyvaultinfra12345" {
     ]
   }
 }
-#----------------------------------------------------------------
+#---------------------------------storage account and storage container for storing the state file -------------------------------
 
 resource "azurerm_storage_account" "tfstate" {
   name                     = "tfstateinfra54321"
@@ -86,8 +86,8 @@ resource "azurerm_storage_account" "tfstate" {
     environment = "dev"
   }
 }
-
-resource "azurerm_storage_container" "tfstate" {
+ 
+ resource "azurerm_storage_container" "tfstate" {
   name                  = "tfstate"
   storage_account_name  = azurerm_storage_account.tfstate.name
   container_access_type = "blob"
@@ -96,59 +96,35 @@ resource "azurerm_storage_container" "tfstate" {
 
 //----------------------------------------------namespaces--------------------------------------------------------------------------
 
-/* resource "kubernetes_namespace" "monitoring" {
+ resource "kubernetes_namespace" "monitoring" {
   metadata {
-    name = var.namespace
+    name = "monitoring"
   }
-} */
+} 
 
-//--------------------------------------------------prometheus-----------------------------------------------------------------resource "helm_release" "prometheus" {/* 
- /* resource "helm_release" "argocd" {
-  chart      = "../argo-cd"
-  name       = "argocd"
-  namespace  = "argocd"
-  verify = false
- }  */
-//----------------------------------------------------grafana--------------------------------------------------------------
-
-/* resource "kubernetes_secret" "grafana" {yes
-
+resource "kubernetes_namespace" "argo-cd" {
   metadata {
-    name      = "grafana"
-    namespace = var.namespace
-  } 
-
-  data = {
-    admin-user     = "admin"
-    admin-password = random_password.grafana.result
+    name = "argo-cd"
   }
-}
+} 
+resource "kubernetes_namespace" "akv2k8s" {
+  metadata {
+    name = "akv2k8s"
+  }
+} 
 
-resource "random_password" "grafana" {
-  length = 24
-}
-
-resource "helm_release" "grafana" {
-  chart      = "grafana"
-  name       = "grafana"
-  repository = "https://grafana.github.io/helm-charts"
-  namespace  = var.namespace
-  version    = "6.24.1"
-
-  values = [
-    templatefile("${path.module}/templates/grafana-values.yaml", {
-      admin_existing_secret = kubernetes_secret.grafana.metadata[0].name
-      admin_user_key        = "admin-user"
-      admin_password_key    = "admin-password"
-      prometheus_svc        = "${helm_release.prometheus.name}-server"
-      replicas              = 1
-    })
+resource "helm_release" "argo_cd" {
+  chart      = "../helm_charts/argo-cd"
+  name       = "argo-cd"
+  namespace  = "argo-cd"
+  values=[
+    "${file("../helm_charts/argo-cd/myvalues/myvalues.yaml")}"
   ]
 }
-
-*/
-//------------------------------------------------------------------------------------------------------------------------
-
-
-
+resource "helm_release" "akv2k8s" {
+  chart      = "../helm_charts/akv2k8s"
+  name       = "akv2k8s"
+  namespace  = "akv2k8s"
+}
+#-------------------------------------------------------------------------------------------------------------------------------
 

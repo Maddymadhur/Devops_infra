@@ -1,0 +1,98 @@
+{{- $roleType := "ClusterRole" -}}
+{{- $roleBindingType := "ClusterRoleBinding" -}}
+{{- if not .Values.watchAllNamespaces }}
+{{- $roleType = "Role" -}}
+{{- $roleBindingType = "RoleBinding" -}}
+{{- end -}}
+{{- if and .Values.controller.enabled .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleType }}
+metadata:
+  name: {{ template "akv2k8s.controller.fullname" . }}
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - spv.no
+  resources:
+  - azurekeyvaultsecrets
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+- apiGroups:
+  - spv.no
+  resources:
+  - azurekeyvaultsecrets/status
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  verbs:
+  - create
+  - update
+  - delete
+  - get
+  - watch
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleType }}
+metadata:
+  name: {{ template "akv2k8s.controller.fullname" . }}-reader
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - spv.no
+  resources:
+  - azurekeyvaultsecrets
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleBindingType }}
+metadata:
+  name: {{ template "akv2k8s.controller.fullname" . }}
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "akv2k8s.controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: {{ $roleType }}
+  name: {{ template "akv2k8s.controller.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: {{ $roleBindingType }}
+metadata:
+  name: {{ template "akv2k8s.controller.fullname" . }}-reader
+  labels:
+    {{- include "akv2k8s.labels" . | nindent 4 }}
+subjects:
+- kind: Group
+  name: system:serviceaccounts
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: {{ $roleType }}
+  name: {{ template "akv2k8s.controller.fullname" . }}-reader
+  apiGroup: rbac.authorization.k8s.io
+{{- end}}
