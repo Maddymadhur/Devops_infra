@@ -37,7 +37,7 @@ resource "azurerm_kubernetes_cluster" "infrastructure-aks1" {
 }
 //---------------------------------------------Role assignment for container registry------------------------------------------------------------
 resource "azurerm_role_assignment" "example" {
-  principal_id                     =  data.azurerm_client_config.current.client_id
+  principal_id                     = data.azurerm_client_config.current.client_id
   role_definition_name             = "AcrPull"
   scope                            = azurerm_container_registry.ContainerregistryInfra.id
   skip_service_principal_aad_check = true
@@ -86,8 +86,8 @@ resource "azurerm_storage_account" "tfstate" {
     environment = "dev"
   }
 }
- 
- resource "azurerm_storage_container" "tfstate" {
+
+resource "azurerm_storage_container" "tfstate" {
   name                  = "tfstate"
   storage_account_name  = azurerm_storage_account.tfstate.name
   container_access_type = "blob"
@@ -96,35 +96,47 @@ resource "azurerm_storage_account" "tfstate" {
 
 //----------------------------------------------namespaces--------------------------------------------------------------------------
 
- resource "kubernetes_namespace" "monitoring" {
+resource "kubernetes_namespace" "monitoring" {
   metadata {
     name = "monitoring"
   }
-} 
+}
 
 resource "kubernetes_namespace" "argo-cd" {
   metadata {
     name = "argo-cd"
   }
-} 
+}
 resource "kubernetes_namespace" "akv2k8s" {
   metadata {
     name = "akv2k8s"
   }
-} 
+}
 
+resource "kubernetes_namespace" "reloader" {
+  metadata {
+    name = "reloader"
+  }
+}
+//----------------------------------------------helm chart deployment on AKS--------------------------------------------------------------------------
 resource "helm_release" "argo_cd" {
-  chart      = "../helm_charts/argo-cd"
-  name       = "argo-cd"
-  namespace  = "argo-cd"
-  values=[
+  chart     = "../helm_charts/argo-cd"
+  name      = "argo-cd"
+  namespace = "argo-cd"
+  values = [
     "${file("../helm_charts/argo-cd/myvalues/myvalues.yaml")}"
   ]
 }
 resource "helm_release" "akv2k8s" {
-  chart      = "../helm_charts/akv2k8s"
-  name       = "akv2k8s"
-  namespace  = "akv2k8s"
+  chart     = "../helm_charts/akv2k8s"
+  name      = "akv2k8s"
+  namespace = "akv2k8s"
+}
+
+resource "helm_release" "reloader" {
+  chart     = "../helm_charts/reloader"
+  name      = "reloader"
+  namespace = "reloader"
 }
 #-------------------------------------------------------------------------------------------------------------------------------
 

@@ -5,16 +5,16 @@ terraform {
       version = "2.99.0"
     }
     azuread = {
-      source = "hashicorp/azuread"
+      source  = "hashicorp/azuread"
       version = "2.26.1"
     }
   }
-      backend "azurerm" {
-        resource_group_name  = "infrastructureaks"
-        storage_account_name = "tfstateinfra54321"
-        container_name       = "tfstate"
-        key                  = "terraform.tfstate"
-    }
+  backend "azurerm" {
+    resource_group_name  = "infrastructureaks"
+    storage_account_name = "tfstateinfra54321"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
 
 }
 
