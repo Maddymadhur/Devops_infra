@@ -118,6 +118,18 @@ resource "kubernetes_namespace" "reloader" {
     name = "reloader"
   }
 }
+
+resource "kubernetes_namespace" "prometheus" {
+  metadata {
+    name = "prometheus"
+  }
+}
+
+resource "kubernetes_namespace" "ingress" {
+  metadata {
+    name = "ingress"
+  }
+}
 //----------------------------------------------helm chart deployment on AKS--------------------------------------------------------------------------
 resource "helm_release" "argo_cd" {
   chart     = "../helm_charts/argo-cd"
@@ -137,6 +149,18 @@ resource "helm_release" "reloader" {
   chart     = "../helm_charts/reloader"
   name      = "reloader"
   namespace = "reloader"
+}
+
+resource "helm_release" "prometheus" {
+  chart     = "../helm_charts/prometheus"
+  name      = "prometheus"
+  namespace = "prometheus"
+}
+
+resource "helm_release" "ingress-nginx" {
+  chart     = "../helm_charts/ingress-nginx"
+  name      = "ingress-nginx"
+  namespace = "ingress"
 }
 #-------------------------------------------------------------------------------------------------------------------------------
 
