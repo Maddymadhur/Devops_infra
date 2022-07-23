@@ -45,6 +45,14 @@ jobs:
       - run: |
            az login
 
+      - name: Azure login
+        uses: azure/login@v1.4.3
+        with:
+          ARM_CLIENT_ID: 429f9634-504d-42be-9586-23ad4003f5ef
+          ARM_CLIENT_SECRET: ydK8Q~ALdJfMne2kD6D2QeUfFiY~MPFsMA2PscnN
+          ARM_SUBSCRIPTION_ID: 58299428-b94d-4171-8ae1-1aa5bccb1765
+          ARM_TENANT_ID: 7d2c1f1a-ef24-4fed-84fe-2d915cb96792
+          
       - name: Terraform Plan
         run: terraform plan
         working-directory: "terraform"
