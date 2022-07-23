@@ -41,4 +41,5 @@ provider "helm" {
 
 provider "kubernetes" {
   config_path = pathexpand(var.kube_config)
+  load_config_file = false
 }
