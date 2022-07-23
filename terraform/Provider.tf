@@ -44,6 +44,5 @@ provider "helm" {
 }
 
 provider "kubernetes" {
-  host = data.azurerm_kubernetes_cluster.infrastructure-aks1.kube_config.0.host
   config_path = pathexpand(var.kube_config)
 }
