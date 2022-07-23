@@ -5,7 +5,6 @@ server:
     namespace: argo-cd
     additionalLabels: {}
     additionalAnnotations: {}
-    additionalAnnotations: {}
     finalizers:
     - resources-finalizer.argocd.argoproj.io
     description: This is Demo DMP project
