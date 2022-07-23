@@ -37,9 +37,6 @@ jobs:
         
       - name: Terraform Format
         run: terraform fmt -check
-      
-      - name: Azure CLI Action
-        uses: Azure/cli@v1
 
       - name: Azure login
         uses: azure/login@v1.4.3
