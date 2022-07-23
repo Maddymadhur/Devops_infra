@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/azuread"
       version = "2.26.1"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.1"
+    }
   }
   backend "azurerm" {
     resource_group_name  = "infrastructureaks"
@@ -40,6 +44,6 @@ provider "helm" {
 }
 
 provider "kubernetes" {
+  host = data.azurerm_kubernetes_cluster.infrastructure-aks1.kube_config.0.host
   config_path = pathexpand(var.kube_config)
-  load_config_file = false
 }
